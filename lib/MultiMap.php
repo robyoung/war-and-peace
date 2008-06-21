@@ -2,7 +2,7 @@
 
 class MultiMap
 {
-	const DEFAULT_API_KEY = 'foobar';
+	const DEFAULT_API_KEY = 'OA08062116357113812';
 	const BASE_URL        = 'http://developer.multimap.com/API/';
 	const VERSION         = '1.2';
 
@@ -10,7 +10,7 @@ class MultiMap
 
 	public static function create()
 	{
-		return self(self::DEFAULT_API_KEY);
+		return new self(self::DEFAULT_API_KEY);
 	}
 
 	public function __construct($api_key)
@@ -20,8 +20,9 @@ class MultiMap
 	
 	public function getPoint($query)
 	{
-		geocode/
-		$url = self::BASE_URL . 'geocode/' . self::VERSION . '/' . $this->api_key . '?qs=' . $query;
-		$xml = simplexml_load_file($url);
+		$url   = self::BASE_URL . 'geocode/' . self::VERSION . '/' . $this->api_key . '?qs=' . $query;
+		$xml   = simplexml_load_file($url);
+		$point = $xml->Location[0]->Point;
+		return array((string)$point->Lat, (string)$point->Lon);
 	}
 }
