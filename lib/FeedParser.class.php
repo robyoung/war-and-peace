@@ -33,7 +33,7 @@ class FeedParser implements Iterator
 			$this->current_feed = Zend_Feed::import($this->urls[$this->urls_i++]);
 		}
 		$this->current_feed->next();
-		if (!$this->currnt_feed->valid()) {
+		if (!$this->current_feed->valid()) {
 			return $this->next();
 		} else {
 			$this->current_item = $this->current_feed->current();
