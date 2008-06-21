@@ -5,6 +5,7 @@
 			<li><a href="#">Feed Article One Title...</a></li>
 			<li><a href="#">Another story from RSS here...</a></li>
 			<li><a href="#">Third article...</a></li>
+			<li><a href="#">Amazing MultiMap mashup wins Mashed...</a></li>
 		</ul>
 	</div>
 	<div id="countries">
@@ -13,6 +14,7 @@
 			<li><a href="#">Zimbabwe</a></li>
 			<li><a href="#">Sudan</a></li>
 			<li><a href="#">Iran</a></li>
+			<li><a href="#">Canada</a></li>
 		</ul>
 	</div>
 	<div id="key">

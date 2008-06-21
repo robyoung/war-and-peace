@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 23:13:47
+<?php /* Smarty version 2.6.19, created on 2008-06-21 23:20:33
          compiled from details.tpl */ ?>
 <div id="details">
 	<div id="current">
@@ -7,6 +7,7 @@
 			<li><a href="#">Feed Article One Title...</a></li>
 			<li><a href="#">Another story from RSS here...</a></li>
 			<li><a href="#">Third article...</a></li>
+			<li><a href="#">Amazing MultiMap mashup wins Mashed...</a></li>
 		</ul>
 	</div>
 	<div id="countries">
@@ -15,6 +16,7 @@
 			<li><a href="#">Zimbabwe</a></li>
 			<li><a href="#">Sudan</a></li>
 			<li><a href="#">Iran</a></li>
+			<li><a href="#">Canada</a></li>
 		</ul>
 	</div>
 	<div id="key">
