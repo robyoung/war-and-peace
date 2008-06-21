@@ -5,10 +5,6 @@ require 'inc/db.php';
 require 'lib/FeedParser.class.php';
 require 'lib/Tokenizer.class.php';
 
-echo "Loading country tags...";
-$country_tags = dbSelect("SELECT * FROM countries JOIN country_tags ON (countries.id=country_tags.country_id)");
-echo "DONE\n";
-
 echo "Loading feeds...";
 $parser = new FeedParser();
 $opml = simplexml_load_file('http://news.bbc.co.uk/rss/feeds.opml');
@@ -20,20 +16,30 @@ foreach ($opml->xpath('//outline') as $item) {
 }
 echo "DONE\n";
 
-$tk_factory = new TokenizerFactory($country_tags);
+$tk_factory = TokenizerFactory::create();
 
-$yes = 0;
-$no  = 0;
 foreach ($parser as $item) {
-  $tokenizer = $tk_factory->create($parser, $item);
+  $tokenizer = $tk_factory->createTokenizer($parser, $item);
   $locations = $tokenizer->getLocations();
   if ($locations) {
-    $yes++;
-    echo "[" . $parser->current_feed->title() . "] " . $item->title() . "\n";
-    print_r($locations);
-  } else {
-    $no++;
+    if (count($locations)>1) {
+      $classifier = $tokenizer->getEdgeType();
+      if ($classifier) {
+        if (!dbSelect('SELECT * FROM edge WHERE edge_type="'. $classifier['edge_type_id'] . '" and url="' . (string)$item->link() . '"')) {
+          dbInsert('edge', array(
+            'edge_type' => $classifier['edge_type_id'],
+            'country_one' => $locations[0]['id'],
+            'country_two' => $locations[1]['id'],
+            'url'         => (string)$item->link(),
+            'title'       => (string)$item->title()
+          ));
+        }
+      } else {
+        echo $tokenizer . "\n";
+        echo $item->content() . "\n";
+        echo $item->description() . "\n";
+        print_r($locations);
+      }
+    }
   }
 }
-echo "yes: " . $yes . "\n";
-echo "no:  " . $no  . "\n";
