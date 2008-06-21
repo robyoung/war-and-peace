@@ -63,7 +63,7 @@ class Tokenizer
 		$matches = array();
 		foreach ($this->getCapsNGrams() as $ngram) {
 			$i = array_search($ngram, $this->tags);
-			if ($i!==false) {
+			if ($i!==false && !in_array($ngram, $matches)) {
 				$matches[] = $ngram;
 			}
 		}

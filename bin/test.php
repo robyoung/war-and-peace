@@ -10,28 +10,30 @@ $country_tags = dbSelect("SELECT * FROM country_tags");
 echo "DONE\n";
 
 echo "Loading feeds...";
-$parser = new FeedParser($country_tags);
+$parser = new FeedParser();
 $opml = simplexml_load_file('http://news.bbc.co.uk/rss/feeds.opml');
 $i = 0;
 foreach ($opml->xpath('//outline') as $item) {
-	if ($i++>5) {
-		break;
-	}
 	if ((string)$item['language'] == 'en-gb') {
 		$parser->add((string)$item['xmlUrl']);
 	}
 }
 echo "DONE\n";
 
-$tk_factory = new TokenizerFactory();
+$tk_factory = new TokenizerFactory($country_tags);
 
+$yes = 0;
+$no  = 0;
 foreach ($parser as $item) {
+  $tokenizer = $tk_factory->create($parser, $item);
+  $locations = $tokenizer->getLocations();
+  if ($locations) {
+    $yes++;
     echo "[" . $parser->current_feed->title() . "] " . $item->title() . "\n";
-    $tokenizer = $tk_factory->create($parser, $item);
-    echo strlen($tokenizer->text) . "\n";
-    print_r($tokenizer->getLocations());
-    //print_r($tokenizer->getCapsNGrams());
-    echo "\n";
-    /*$tokenizer->getLocations();
-    $tokenizer->getClasifiers();*/
+    print_r($locations);
+  } else {
+    $no++;
+  }
 }
+echo "yes: " . $yes . "\n";
+echo "no:  " . $no  . "\n";
