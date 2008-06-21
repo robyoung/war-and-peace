@@ -26,7 +26,7 @@ class MultiMap
 		return array((string)$point->Lat, (string)$point->Lon);
   }
 
-	private function _buildBounder($for, $bottom_left, $top_right, $count)
+	private function _buildBounder($for, $bottom_left, $top_right)
 	{
 		$sql = 'BETWEEN(' . $for . '.lat, ' . $bottom_left[0] . ', ' . $top_right[0] . ') ';
 		if ($top_right[1] < $bottom_left[1]) {
@@ -50,8 +50,6 @@ class MultiMap
       "WHERE " . $country_one . ' and ' . $country_two . ' ' .
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
-      
-      die($sql);
 
     $items  = dbSelect($sql);
     

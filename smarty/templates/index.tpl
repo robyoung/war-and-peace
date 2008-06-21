@@ -19,7 +19,7 @@
 	<script type="text/javascript">
 	var mapviewer;
 	</script>
-	<script type="text/javascript">		var edgeCount = 20;
+	<script type="text/javascript">		var edgeCount = 300;
 		var mapviewer = false;
 		
 		Event.observe(window, 'load', function() {		 getSize();
@@ -37,13 +37,13 @@
 		 	mapviewer.removeAllOverlays();
 		 
 		 	mapBounds = mapviewer.getMapBounds();
-		 	southEast = mapBounds[0];
-		 	northWest = mapBounds[1];
+		 	southEast = mapBounds.getSouthEast();
+		 	northWest = mapBounds.getNorthWest();
 		 	
 		 	url = '{/literal}{$config.domain}{literal}?module=edges&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
 		 	
 		 	new Ajax.Request(url, {			  method: 'get',			  onSuccess: function(http) {			    // cycle through and set the overlays
-			    alert(http.responseText);
+			    $('test').innerHTML = http.responseText;
 			    eval(http.responseText);			  }			});
 		 	
 		 	
@@ -56,5 +56,8 @@
 	{include file='navigation.tpl'}
 	{include file='map.tpl'}
 	{include file='details.tpl'}
+	
+	<div id="test"></div>
+	
 </body>
 </html>

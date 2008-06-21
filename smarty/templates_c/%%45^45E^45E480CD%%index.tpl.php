@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 20:56:35
+<?php /* Smarty version 2.6.19, created on 2008-06-22 00:22:08
          compiled from index.tpl */ ?>
 <?php echo '<?xml'; ?>
  version="1.0"<?php echo '?>'; ?>
@@ -32,31 +32,38 @@ lib/height.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	var mapviewer;
 	</script>
-	<script type="text/javascript">		Event.observe(window, \'load\', function() {		 getSize();
+	<script type="text/javascript">		var edgeCount = 300;
+		var mapviewer = false;
+		
+		Event.observe(window, \'load\', function() {		 getSize();
+		
 		 mapviewer = new MMFactory.createViewer( document.getElementById( \'map\' ) );
 		 mapviewer.goToPosition( new MMLatLon( 42.3508, 0 ) );
 		 mapviewer.zoom(-10, \'Start\');
+		 mapviewer.addEventHandler(\'changeZoom\', loadEdges);
 		 
-		 '; ?>
-<?php $_from = $this->_tpl_vars['relationships']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array'); }if (count($_from)):
-    foreach ($_from as $this->_tpl_vars['rel']):
-?>
-		 var points = [];
-		 point1 = new MMLatLon( <?php echo $this->_tpl_vars['rel']['start']['lat']; ?>
-, <?php echo $this->_tpl_vars['rel']['start']['long']; ?>
- );
-		 point2 = new MMLatLon( <?php echo $this->_tpl_vars['rel']['finish']['lat']; ?>
-, <?php echo $this->_tpl_vars['rel']['finish']['long']; ?>
- );
-		 points.push(point1);
-		 points.push(point2);
-		 polyline = new MMPolyLineOverlay( points, undefined, undefined, undefined,  undefined, undefined );
-		 mapviewer.addOverlay(polyline);
+		 loadEdges();
+		 		 		 		});
+		
+		function loadEdges(){
+		 	
+		 	mapviewer.removeAllOverlays();
 		 
-		 alert(mapviewer.getMapBounds());
-		 
-		 <?php endforeach; endif; unset($_from); ?><?php echo '
-		 		});	</script>
+		 	mapBounds = mapviewer.getMapBounds();
+		 	southEast = mapBounds.getSouthEast();
+		 	northWest = mapBounds.getNorthWest();
+		 	
+		 	url = \''; ?>
+<?php echo $this->_tpl_vars['config']['domain']; ?>
+<?php echo '?module=edges&southEast=\' + southEast + \'&northWest=\' + northWest + \'&count=\' + edgeCount;
+		 	
+		 	new Ajax.Request(url, {			  method: \'get\',			  onSuccess: function(http) {			    // cycle through and set the overlays
+			    $(\'test\').innerHTML = http.responseText;
+			    eval(http.responseText);			  }			});
+		 	
+		 	
+		 }
+	</script>
 	'; ?>
 
 </head>
@@ -77,5 +84,8 @@ $this->_smarty_include(array('smarty_include_tpl_file' => 'details.tpl', 'smarty
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
+	
+	<div id="test"></div>
+	
 </body>
 </html>
