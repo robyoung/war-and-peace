@@ -57,6 +57,15 @@ body{
 	padding-left:26px;
 	background:url(../images/bullet.png) 10px 4px no-repeat;
 	}
+#details ul#type li{
+	clear:left;
+	margin:7px 0 0 0;
+	width:auto;
+	color:#bbb;
+	padding-left:10px;
+	background:url(../images/bullet.png) 10px 4px no-repeat;
+	overflow:auto;
+	}
 #details ul li a{
 	color:#bbb;
 	text-decoration:none;
@@ -90,6 +99,7 @@ span.title{
 	float:left;
 	margin:0 0 0 7px;
 	color:#555;
+	line-height:10px;
 	}
 /* @end */
 /* @group Typography */

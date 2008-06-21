@@ -16,8 +16,8 @@
 		</ul>
 	</div>
 	<div id="key">
-		<h1>Status of relations</h1>
-		<ul>
+		<h1>Relationship type</h1>
+		<ul id="type">
 			<li>
 				<span class="key bad"></span>
 				<span class="title"><a href="#">Bad</a></span>

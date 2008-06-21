@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 22:23:43
+<?php /* Smarty version 2.6.19, created on 2008-06-21 23:13:47
          compiled from details.tpl */ ?>
 <div id="details">
 	<div id="current">
@@ -18,8 +18,8 @@
 		</ul>
 	</div>
 	<div id="key">
-		<h1>Status of relations</h1>
-		<ul>
+		<h1>Relationship type</h1>
+		<ul id="type">
 			<li>
 				<span class="key bad"></span>
 				<span class="title"><a href="#">Bad</a></span>
