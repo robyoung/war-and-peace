@@ -28,11 +28,11 @@ class MultiMap
 
 	private function _buildBounder($for, $bottom_left, $top_right, $count)
 	{
-		$sql = 'BETWEEN(' . $for . '.lat, ' . $bottom_left[0] . ', ' . $top_right[0] . ') ';
+		$sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
 		if ($top_right[1] < $bottom_left[1]) {
-			$sql .= 'and BETWEEN(' . $for . '.long, -180, ' . $top_right[1] . ') and BETWEEN(' . $for . '.long, ' . $bottom_left[1] . ', 180) ';
+			$sql .= 'and ' . $for . '.long BETWEEN -180 and ' . $top_right[1] . ' and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and 180 ';
 		} else {
-			$sql .= 'and BETWEEN(' . $for . '.long, ' . $bottom_left[1] . ', ' . $top_right[1] . ')';
+			$sql .= 'and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and ' . $top_right[1];
 		}
 		return $sql;
 	}
