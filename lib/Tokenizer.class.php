@@ -67,6 +67,10 @@ class Tokenizer
 				$matches[] = $ngram;
 			}
 		}
+		$return = array();
+		foreach ($matches as $ngram) {
+			$return[] = $this->country_tags[$ngram];
+		}
 		return $matches;
 	}
 

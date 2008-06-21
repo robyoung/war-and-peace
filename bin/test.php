@@ -6,7 +6,7 @@ require 'lib/FeedParser.class.php';
 require 'lib/Tokenizer.class.php';
 
 echo "Loading country tags...";
-$country_tags = dbSelect("SELECT * FROM country_tags");
+$country_tags = dbSelect("SELECT * FROM countries JOIN country_tags ON (countries.id=country_tags.country_id)");
 echo "DONE\n";
 
 echo "Loading feeds...";
