@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 23:20:33
+<?php /* Smarty version 2.6.19, created on 2008-06-21 23:22:06
          compiled from details.tpl */ ?>
 <div id="details">
 	<div id="current">
