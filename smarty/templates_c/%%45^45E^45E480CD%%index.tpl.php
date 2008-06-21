@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 20:56:35
+<?php /* Smarty version 2.6.19, created on 2008-06-21 22:16:13
          compiled from index.tpl */ ?>
 <?php echo '<?xml'; ?>
  version="1.0"<?php echo '?>'; ?>
@@ -53,7 +53,7 @@ lib/height.js" type="text/javascript"></script>
 		 polyline = new MMPolyLineOverlay( points, undefined, undefined, undefined,  undefined, undefined );
 		 mapviewer.addOverlay(polyline);
 		 
-		 alert(mapviewer.getMapBounds());
+		 //alert(mapviewer.getMapBounds());
 		 
 		 <?php endforeach; endif; unset($_from); ?><?php echo '
 		 		});	</script>
@@ -77,5 +77,7 @@ $this->_smarty_include(array('smarty_include_tpl_file' => 'details.tpl', 'smarty
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
+	<img id="pirates" src="<?php echo $this->_tpl_vars['config']['sitedomain']; ?>
+images/pirates.gif" />
 </body>
 </html>

@@ -2,6 +2,13 @@ body{
 	height:100%;
 	width:100%;
 	text-align:left;
+	font-family:Trebuchet MS, Helvetica, Sans serif;
+	}
+#pirates{
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin:-20px 0 0 -40px;
 	}
 /* @group Header */
 #navigation{
@@ -26,8 +33,8 @@ body{
 /* @group Details */
 #details{
 	height:120px;
-	background-color:#f1f1f1;
-	border-top:1px solid #ccc;
+	background:url(../images/detail.png);
+	border-top:1px solid #555;
 	}
 #details div{
 	float:left;
@@ -39,20 +46,26 @@ body{
 	margin:8px 0 0 0;
 	padding:0;
 	width:100%;
+	height:90px;
 	list-style-type:none;
 	}
 #details ul li{
 	clear:left;
+	margin:3px 0 0 0;
 	width:auto;
+	color:#bbb;
 	padding-left:26px;
-	background:url(../images/bullet.png) 10px 5px no-repeat;
+	background:url(../images/bullet.png) 10px 4px no-repeat;
 	}
 #details ul li a{
-	color:#555;
+	color:#bbb;
 	text-decoration:none;
 	}
 #current{
-	border-right:1px solid #ccc;
+	border-right:1px solid #777;
+	}
+#countries{
+	border-right:1px solid #777;
 	}
 span.key{
 	float:left;
@@ -60,22 +73,22 @@ span.key{
 	width:12px;
 	height:12px;
 	}
-span.vbad{
+span.bad{
 	background-color:#c8050c;
 	}
-span.bad{
-	background-color:#d74800;
+span.sport{
+	background-color:#00a235;
 	}
-span.good{
-	background-color:#5b97bd;
+span.business{
+	background-color:#538aad;
 	}
-span.vgood{
+span.pirates{
 	background-color:#1a5690;
 	}
 span.title{
+	display:block;
 	float:left;
 	margin:0 0 0 7px;
-	font-size:1.1em;
 	color:#555;
 	}
 /* @end */
@@ -83,8 +96,8 @@ span.title{
 h1{
 	float:left;
 	margin:7px 0 0 10px;
-	font-size:1.1em;
+	font-size:1.2em;
 	font-weight:bold;
-	color:#003756;
+	color:#ddd;
 	}
 /* @end */
