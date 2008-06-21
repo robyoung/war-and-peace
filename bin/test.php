@@ -3,8 +3,12 @@ require 'lib/FeedParser.class.php';
 require 'lib/Tokenizer.class.php';
 
 $parser = new FeedParser();
-$parser->add('http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/front_page/rss.xml');
-$parser->add('http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml');
+$opml = simplexml_load_file('http://news.bbc.co.uk/rss/feeds.opml');
+foreach ($opml->xpath('//outline') as $item) {
+	if ((string)$item['language'] == 'en-gb') {
+		$parser->add((string)$item['xmlUrl']);
+	}
+}
 
 $tk_factory = new TokenizerFactory();
 

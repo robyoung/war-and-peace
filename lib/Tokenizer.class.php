@@ -37,15 +37,15 @@ class Tokenizer
 	
 	public function getCapsNGrams()
 	{
-		preg_match_all('#(?:^|\W)([A-Z]\w+(?:\W+[A-Z]\w+)*)(?:\W|$)#', $this->text, $matches);
+		preg_match_all('#(?:^|\W)([A-Z]\w+(?:\W{1,3}[A-Z]\w+)*)(?:\W|$)#', $this->text, $matches);
 		return $matches[1];
 	}
-	
+
 	public function getLocations()
 	{
 		
 	}
-	
+
 	public function getClassifiers()
 	{
 		
