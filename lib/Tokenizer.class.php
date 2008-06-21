@@ -3,15 +3,21 @@
 class TokenizerFactory
 {
 	private $country_tags;
+	private $tags;
 
 	public function __construct($country_tags)
 	{
-		$this->country_tags = $country_tags;
+		$this->country_tags = array();
+		$this->tags = array();
+		foreach ($country_tags as $country_tag) {
+			$this->country_tags[$country_tag['tag']] = $country_tag;
+			$this->tags[] = $country_tag['tag'];
+		}
 	}
 
 	public function create(FeedParser $parser, Zend_Feed_Entry_Rss $item)
 	{
-		$tokenizer = new Tokenizer($this->country_tags);
+		$tokenizer = new Tokenizer($this->country_tags, $this->tags);
 		$tokenizer->addText((string)$item->title());
 		$tokenizer->addText((string)$item->description());
 		$tokenizer->addText((string)$item->content());
@@ -23,11 +29,13 @@ class Tokenizer
 {
 	private $text;
 	private $country_tags;
+	private $tags;
 
-	public function __construct($country_tags)
+	public function __construct($country_tags, $tags)
 	{
 		$this->text = '';
 		$this->country_tags = $country_tags;
+		$this->tags = $tags;
 	}
 	
 	public function __get($name)
@@ -53,7 +61,7 @@ class Tokenizer
 	public function getLocations()
 	{
 		foreach ($this->getCapsNGrams() as $ngram) {
-			$i = array_search($ngram, $this->country_tags);
+			$i = array_search($ngram, $this->tags);
 			if ($i!==false) {
 				echo "Found " . $ngram . "\n";
 			}
