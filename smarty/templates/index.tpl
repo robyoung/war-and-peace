@@ -19,24 +19,36 @@
 	<script type="text/javascript">
 	var mapviewer;
 	</script>
-	<script type="text/javascript">		Event.observe(window, 'load', function() {		 getSize();
+	<script type="text/javascript">		var edgeCount = 20;
+		var mapviewer = false;
+		
+		Event.observe(window, 'load', function() {		 getSize();
+		
 		 mapviewer = new MMFactory.createViewer( document.getElementById( 'map' ) );
 		 mapviewer.goToPosition( new MMLatLon( 42.3508, 0 ) );
 		 mapviewer.zoom(-10, 'Start');
+		 mapviewer.addEventHandler('changeZoom', loadEdges);
 		 
-		 {/literal}{foreach from=$relationships item=rel}
-		 var points = [];
-		 point1 = new MMLatLon( {$rel.start.lat}, {$rel.start.long} );
-		 point2 = new MMLatLon( {$rel.finish.lat}, {$rel.finish.long} );
-		 points.push(point1);
-		 points.push(point2);
-		 polyline = new MMPolyLineOverlay( points, undefined, undefined, undefined,  undefined, undefined );
-		 mapviewer.addOverlay(polyline);
+		 loadEdges();
+		 		 		 		});
+		
+		function loadEdges(){
+		 	
+		 	mapviewer.removeAllOverlays();
 		 
-		 //alert(mapviewer.getMapBounds());
-		 
-		 {/foreach}{literal}
-		 		});	</script>
+		 	mapBounds = mapviewer.getMapBounds();
+		 	southEast = mapBounds[0];
+		 	northWest = mapBounds[1];
+		 	
+		 	url = '{/literal}{$config.domain}{literal}?module=edges&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
+		 	
+		 	new Ajax.Request(url, {			  method: 'get',			  onSuccess: function(http) {			    // cycle through and set the overlays
+			    alert(http.responseText);
+			    eval(http.responseText);			  }			});
+		 	
+		 	
+		 }
+	</script>
 	{/literal}
 </head>
 
