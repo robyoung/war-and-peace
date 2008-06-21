@@ -10,7 +10,6 @@ class FeedParser implements Iterator
 	public function add($url)
 	{
 		$this->urls[] = $url;
-		$this->next();
   }
 
   public function __get($name)
