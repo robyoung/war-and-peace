@@ -1,8 +1,14 @@
 <?php
+require 'inc/config.php';
+require 'inc/db.php';
+
 require 'lib/FeedParser.class.php';
 require 'lib/Tokenizer.class.php';
 
-$parser = new FeedParser();
+
+$country_tags = dbSelect("SELECT * FROM country_tags");
+
+$parser = new FeedParser($country_tags);
 $opml = simplexml_load_file('http://news.bbc.co.uk/rss/feeds.opml');
 foreach ($opml->xpath('//outline') as $item) {
 	if ((string)$item['language'] == 'en-gb') {
