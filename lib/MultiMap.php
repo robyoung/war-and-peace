@@ -30,7 +30,7 @@ class MultiMap
 	{
 		$sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
 		if ($top_right[1] < $bottom_left[1]) {
-			$sql .= 'and ' . $for . '.long BETWEEN -180 and ' . $top_right[1] . ' and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and 180 ';
+			$sql .= 'and (' . $for . '.long BETWEEN -180 and ' . $top_right[1] . ' or ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and 180) ';
 		} else {
 			$sql .= 'and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and ' . $top_right[1];
 		}
