@@ -38,10 +38,11 @@ class MultiMap
       "and country_two.lat > {$bottom_left[0]} and country_two.long > {$bottom_left[1]} and country_two.lat < {$top_right[0]} and country_two.long < {$top_right[1]} ".
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
+      
+      die($sql);
 
     $items  = dbSelect($sql);
-    echo count($items) . "\n";
-
+    
     $return = array();
     foreach ($items as $item) {
       $sql = 'SELECT edge.url, edge.title, edge_type.name '.
