@@ -60,12 +60,14 @@ class Tokenizer
 
 	public function getLocations()
 	{
+		$matches = array();
 		foreach ($this->getCapsNGrams() as $ngram) {
 			$i = array_search($ngram, $this->tags);
 			if ($i!==false) {
-				echo "Found " . $ngram . "\n";
+				$matches[] = $ngram;
 			}
 		}
+		return $matches;
 	}
 
 	public function getClassifiers()
