@@ -28,7 +28,7 @@ class MultiMap
 
 	private function _buildBounder($for, $bottom_left, $top_right, $middle)
   {
-    if ($middle[1] > $top_right[0] or $middle[0] < $bottom_left[0]) {
+    if ($middle[0] > $top_right[0] or $middle[0] < $bottom_left[0]) {
       $sql = '';
     } elseif ($top_right[0] < $bottom_left[0]) {
       $sql = '(' . $for . '.lat BETWEEN -90 and ' . $top_right[0] . ' or ' . $for . '.lat and ' . $bottom_left[0] . ' and 90) ';
@@ -62,7 +62,6 @@ class MultiMap
       "order by distance desc limit $count";
 
     $items  = dbSelect($sql);
-    echo count($items) . "\n";
 
     $return = array();
     foreach ($items as $item) {
@@ -79,12 +78,13 @@ class MultiMap
         'business' => '#538aad',
         'pirates'  => '#1a5690'
         );
-      foreach ($edges as $edge) {
+      foreach ($edges as $i => $edge) {
         if (!isset($types[$edge['type']])) {
           $types[$edge['type']] = 1;
         } else {
           $types[$edge['type']]++;
         }
+        $edges[$i]['source'] = $this->_getSource($edge['url']);
       }
       list($type, $count) = each($types);
       
@@ -109,7 +109,15 @@ class MultiMap
         );
       $return[] = $return_item;
     }
-    return '';
     return $return;
+  }
+
+  private function _getSource($url)
+  {
+    if (strpos($url, 'bbc.co.uk') !== false) {
+      return 'BBC';
+    } elseif (strpos($url, 'guardian.co.uk') !== false) {
+      return 'Guardian';
+    }
   }
 }
