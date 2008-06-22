@@ -27,10 +27,18 @@
 		 mapviewer = new MMFactory.createViewer( document.getElementById( 'map' ) );
 		 mapviewer.goToPosition( new MMLatLon( 42.3508, 0 ) );
 		 mapviewer.zoom(-10, 'Start');
-		 mapviewer.addEventHandler('changeZoom', loadEdges);
+		 mapviewer.addEventHandler('mapBoundsChanged', loadEdges);
+		 mapviewer.addEventHandler('click', mapClick);
 		 
 		 loadEdges();
 		 		 		 		});
+		
+		function mapClick(event, target, coords, position){
+			if(target instanceof MMPolyLineOverlay){
+				alert(target.getAttribute('line_id'));
+			}
+			console.log(target);	
+		}
 		
 		function loadEdges(){
 		 	
@@ -41,10 +49,9 @@
 		 	northWest = mapBounds.getNorthWest();
 		 	center = mapBounds.getCenter();
 		 	
-		 	projection = new MMProjection(mapviewer.getAvailableZoomFactors());
-		 	alert(projection.getWrapWidth(mapviewer.getZoomFactor()));
-		 	
-		 	alert(mapviewer.getZoomFactor() + ' - ' + mapviewer.getAvailableZoomFactors());
+		 	//projection = new MMProjection(mapviewer.getAvailableZoomFactors());
+		 	//alert(projection.getWrapWidth(mapviewer.getZoomFactor()));	
+		 	//alert(mapviewer.getZoomFactor() + ' - ' + mapviewer.getAvailableZoomFactors());
 		 	
 		 	url = '{/literal}{$config.domain}{literal}?module=edges&center=' + center + '&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
 		 	
