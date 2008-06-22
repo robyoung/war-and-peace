@@ -39,8 +39,14 @@
 		 	mapBounds = mapviewer.getMapBounds();
 		 	southEast = mapBounds.getSouthEast();
 		 	northWest = mapBounds.getNorthWest();
+		 	center = mapBounds.getCenter();
 		 	
-		 	url = '{/literal}{$config.domain}{literal}?module=edges&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
+		 	projection = new MMProjection(mapviewer.getAvailableZoomFactors());
+		 	alert(projection.getWrapWidth(mapviewer.getZoomFactor()));
+		 	
+		 	alert(mapviewer.getZoomFactor() + ' - ' + mapviewer.getAvailableZoomFactors());
+		 	
+		 	url = '{/literal}{$config.domain}{literal}?module=edges&center=' + center + '&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
 		 	
 		 	new Ajax.Request(url, {			  method: 'get',			  onSuccess: function(http) {			    // cycle through and set the overlays
 			    $('test').innerHTML = http.responseText;
@@ -59,12 +65,5 @@
 	
 	<div id="test"></div>
 	
-	<div id="infobox">
-		<div class="header"></div>
-		<div id="infobody">
-		
-		</div>
-		<div class="footer"></div>
-	</div>
 </body>
 </html>
