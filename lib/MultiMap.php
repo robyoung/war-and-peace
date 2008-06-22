@@ -26,7 +26,7 @@ class MultiMap
 		return array((string)$point->Lat, (string)$point->Lon);
   }
 
-	private function _buildBounder($for, $bottom_left, $top_right, $count)
+	private function _buildBounder($for, $bottom_left, $top_right)
 	{
 		$sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
 		if ($top_right[1] < $bottom_left[1]) {
