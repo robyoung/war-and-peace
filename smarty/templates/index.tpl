@@ -47,7 +47,21 @@
 	<div id="infobox">
 		<div class="header"></div>
 		<div id="infobody">
-		
+			<h1>Related articles</h1>
+			<ol>
+				<li>
+					<span>Brown Condemns Zimbabwe Violence</span>
+					<a href="#">The Guardian</a>
+				</li>
+				<li>
+					<span>Robert Mugabe Gets Message From Angolan President</span>
+					<a href="#">BBC News</a>
+				</li>
+				<li>
+					<span>Zimbabwe: Biti to Stay in Remand Prison Until July 7</span>
+					<a href="#">BBC News</a>
+				</li>
+			</ol>
 		</div>
 		<div class="footer"></div>
 	</div>
