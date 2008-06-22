@@ -26,10 +26,19 @@ class MultiMap
 		return array((string)$point->Lat, (string)$point->Lon);
   }
 
-	private function _buildBounder($for, $bottom_left, $top_right)
-	{
-		$sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
-		if ($top_right[1] < $bottom_left[1]) {
+	private function _buildBounder($for, $bottom_left, $top_right, $middle)
+  {
+    if ($middle[1] > $top_right[0] or $middle[0] < $bottom_left[0]) {
+      $sql = '';
+    } elseif ($top_right[0] < $bottom_left[0]) {
+      $sql = '(' . $for . '.lat BETWEEN -90 and ' . $top_right[0] . ' or ' . $for . '.lat and ' . $bottom_left[0] . ' and 90) ';
+    } else {
+		  $sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
+    }
+
+    if ($middle[1] > $top_right[1] or $middle[1] < $bottom_left[1]) {
+      return $sql;
+    } elseif ($top_right[1] < $bottom_left[1]) {
 			$sql .= 'and (' . $for . '.long BETWEEN -180 and ' . $top_right[1] . ' or ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and 180) ';
 		} else {
 			$sql .= 'and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and ' . $top_right[1];
@@ -37,10 +46,10 @@ class MultiMap
 		return $sql;
 	}
 
-  public function getEdgesForBox($bottom_left, $top_right, $count)
+  public function getEdgesForBox($bottom_left, $top_right, $middle, $count)
   {
-		$country_one = $this->_buildBounder('country_one', $bottom_left, $top_right);
-		$country_two = $this->_buildBounder('country_two', $bottom_left, $top_right);
+		$country_one = $this->_buildBounder('country_one', $bottom_left, $top_right, $middle);
+		$country_two = $this->_buildBounder('country_two', $bottom_left, $top_right, $middle);
     $sql = "SELECT country_one.id as country_one_id, country_one.name as country_one_name, country_one.lat as country_one_lat, country_one.long as country_one_long, ".
            "country_two.id as country_two_id, country_two.name as country_two_name, country_two.lat as country_two_lat, country_two.long as country_two_long, " .
       "SQRT(POW(ABS(country_one.lat-country_two.lat), 2)+POW(ABS(country_one.long-country_two.long), 2)) as distance ".
@@ -50,7 +59,8 @@ class MultiMap
       "WHERE " . $country_one . ' and ' . $country_two . ' ' .
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
-
+    
+    echo $sql . "\n\n";
     $items  = dbSelect($sql);
     echo count($items) . "\n";
 
