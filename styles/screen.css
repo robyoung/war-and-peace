@@ -10,6 +10,31 @@ body{
 	left:50%;
 	margin:-20px 0 0 -40px;
 	}
+#infobox{
+	width:218px;
+	position:absolute;
+	right:13px;
+	top:50px;
+	background-position:0 21px;
+	opacity:0.9;
+	}
+#infobox .header{
+	width:218px;
+	height:21px;
+	background:url(../images/infobox-header.png);
+	}
+#infobox #infobody{
+	width:218px;
+	height:21px;
+	background:url(../images/infobox-body.png);
+	}
+#infobox .footer{
+	position:absolute;
+	bottom:0;
+	width:218px;
+	height:27px;
+	background:url(../images/infobox-footer.png);
+	}
 /* @group Header */
 #navigation{
 	width:100%;

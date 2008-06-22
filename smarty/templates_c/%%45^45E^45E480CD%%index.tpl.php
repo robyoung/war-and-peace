@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.19, created on 2008-06-21 23:06:43
+<?php /* Smarty version 2.6.19, created on 2008-06-22 01:05:20
          compiled from index.tpl */ ?>
 <?php echo '<?xml'; ?>
  version="1.0"<?php echo '?>'; ?>
@@ -77,5 +77,12 @@ $this->_smarty_include(array('smarty_include_tpl_file' => 'details.tpl', 'smarty
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
+	<div id="infobox">
+		<div class="header"></div>
+		<div id="infobody">
+		
+		</div>
+		<div class="footer"></div>
+	</div>
 </body>
 </html>
