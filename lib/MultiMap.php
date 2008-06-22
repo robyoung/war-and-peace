@@ -28,7 +28,7 @@ class MultiMap
 
 	private function _buildBounder($for, $bottom_left, $top_right, $middle)
   {
-    if ($middle[1] > $top_right[0] or $middle[0] < $bottom_left[0]) {
+    if ($middle[0] > $top_right[0] or $middle[0] < $bottom_left[0]) {
       $sql = '';
     } elseif ($top_right[0] < $bottom_left[0]) {
       $sql = '(' . $for . '.lat BETWEEN -90 and ' . $top_right[0] . ' or ' . $for . '.lat and ' . $bottom_left[0] . ' and 90) ';
@@ -108,7 +108,7 @@ class MultiMap
         );
       $return[] = $return_item;
     }
-    return '';
+
     return $return;
   }
 }

@@ -35,9 +35,13 @@
 		
 		function mapClick(event, target, coords, position){
 			if(target instanceof MMPolyLineOverlay){
-				alert(target.getAttribute('line_id'));
+				
+				$$('.item').invoke('hide');
+				
+				edgeId = target.getAttribute('line_id');
+				$$('.item_' + edgeId).invoke('show');
 			}
-			console.log(target);	
+				
 		}
 		
 		function loadEdges(){
@@ -57,7 +61,8 @@
 		 	
 		 	new Ajax.Request(url, {			  method: 'get',			  onSuccess: function(http) {			    // cycle through and set the overlays
 			    $('test').innerHTML = http.responseText;
-			    eval(http.responseText);			  }			});
+			    http.responseText.evalScripts();
+			    $('stories').innerHTML = http.responseText;			  }			});
 		 	
 		 	
 		 }
@@ -76,7 +81,7 @@
 		<div class="header"></div>
 		<div id="infobody">
 			<h1>Related articles</h1>
-			<ol>
+			<ol id="stories">
 				<li>
 					<span>Brown Condemns Zimbabwe Violence</span>
 					<a href="#">The Guardian</a>
