@@ -26,16 +26,28 @@ class MultiMap
 		return array((string)$point->Lat, (string)$point->Lon);
   }
 
+	private function _buildBounder($for, $bottom_left, $top_right, $count)
+	{
+		$sql = $for . '.lat BETWEEN  ' . $bottom_left[0] . ' and  ' . $top_right[0] . ' ';
+		if ($top_right[1] < $bottom_left[1]) {
+			$sql .= 'and (' . $for . '.long BETWEEN -180 and ' . $top_right[1] . ' or ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and 180) ';
+		} else {
+			$sql .= 'and ' . $for . '.long BETWEEN ' . $bottom_left[1] . ' and ' . $top_right[1];
+		}
+		return $sql;
+	}
+
   public function getEdgesForBox($bottom_left, $top_right, $count)
   {
+		$country_one = $this->_buildBounder('country_one', $bottom_left, $top_right);
+		$country_two = $this->_buildBounder('country_two', $bottom_left, $top_right);
     $sql = "SELECT country_one.id as country_one_id, country_one.name as country_one_name, country_one.lat as country_one_lat, country_one.long as country_one_long, ".
            "country_two.id as country_two_id, country_two.name as country_two_name, country_two.lat as country_two_lat, country_two.long as country_two_long, " .
       "SQRT(POW(ABS(country_one.lat-country_two.lat), 2)+POW(ABS(country_one.long-country_two.long), 2)) as distance ".
       "FROM edge " .
       "JOIN countries AS country_one ON (edge.country_one=country_one.id) ".
       "JOIN countries AS country_two ON (edge.country_two=country_two.id) " .
-      "WHERE country_one.lat > {$bottom_left[0]} and country_one.long > {$bottom_left[1]} and country_one.lat < {$top_right[0]} and country_one.long < {$top_right[1]} ".
-      "and country_two.lat > {$bottom_left[0]} and country_two.long > {$bottom_left[1]} and country_two.lat < {$top_right[0]} and country_two.long < {$top_right[1]} ".
+      "WHERE " . $country_one . ' and ' . $country_two . ' ' .
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
 
