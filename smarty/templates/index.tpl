@@ -19,24 +19,54 @@
 	<script type="text/javascript">
 	var mapviewer;
 	</script>
-	<script type="text/javascript">		Event.observe(window, 'load', function() {		 getSize();
+	<script type="text/javascript">		var edgeCount = 300;
+		var mapviewer = false;
+		
+		Event.observe(window, 'load', function() {		 getSize();
+		
 		 mapviewer = new MMFactory.createViewer( document.getElementById( 'map' ) );
 		 mapviewer.goToPosition( new MMLatLon( 42.3508, 0 ) );
 		 mapviewer.zoom(-10, 'Start');
+		 mapviewer.addEventHandler('mapBoundsChanged', loadEdges);
+		 mapviewer.addEventHandler('click', mapClick);
 		 
-		 {/literal}{foreach from=$relationships item=rel}
-		 var points = [];
-		 point1 = new MMLatLon( {$rel.start.lat}, {$rel.start.long} );
-		 point2 = new MMLatLon( {$rel.finish.lat}, {$rel.finish.long} );
-		 points.push(point1);
-		 points.push(point2);
-		 polyline = new MMPolyLineOverlay( points, undefined, undefined, undefined,  undefined, undefined );
-		 mapviewer.addOverlay(polyline);
+		 loadEdges();
+		 		 		 		});
+		
+		function mapClick(event, target, coords, position){
+			if(target instanceof MMPolyLineOverlay){
+				
+				$$('.item').invoke('hide');
+				
+				edgeId = target.getAttribute('line_id');
+				$$('.item_' + edgeId).invoke('show');
+			}
+				
+		}
+		
+		function loadEdges(){
+		 	
+		 	mapviewer.removeAllOverlays();
 		 
-		 //alert(mapviewer.getMapBounds());
-		 
-		 {/foreach}{literal}
-		 		});	</script>
+		 	mapBounds = mapviewer.getMapBounds();
+		 	southEast = mapBounds.getSouthEast();
+		 	northWest = mapBounds.getNorthWest();
+		 	center = mapBounds.getCenter();
+		 	
+		 	//projection = new MMProjection(mapviewer.getAvailableZoomFactors());
+		 	//alert(projection.getWrapWidth(mapviewer.getZoomFactor()));	
+		 	//alert(mapviewer.getZoomFactor() + ' - ' + mapviewer.getAvailableZoomFactors());
+		 	
+		 	url = '{/literal}{$config.domain}{literal}?module=edges&center=' + center + '&southEast=' + southEast + '&northWest=' + northWest + '&count=' + edgeCount;
+		 	
+		 	new Ajax.Request(url, {			  method: 'get',			  onSuccess: function(http) {			    // cycle through and set the overlays
+			    $('test').innerHTML = http.responseText;
+			    http.responseText.evalScripts();
+			    $('stories').innerHTML = http.responseText;			  }			});
+		 	
+		 	
+		 }
+	</script>
 	{/literal}
 </head>
 
@@ -44,10 +74,27 @@
 	{include file='navigation.tpl'}
 	{include file='map.tpl'}
 	{include file='details.tpl'}
+	
+	<div id="test"></div>
+	
 	<div id="infobox">
 		<div class="header"></div>
 		<div id="infobody">
-		
+			<h1>Related articles</h1>
+			<ol id="stories">
+				<li>
+					<span>Brown Condemns Zimbabwe Violence</span>
+					<a href="#">The Guardian</a>
+				</li>
+				<li>
+					<span>Robert Mugabe Gets Message From Angolan President</span>
+					<a href="#">BBC News</a>
+				</li>
+				<li>
+					<span>Zimbabwe: Biti to Stay in Remand Prison Until July 7</span>
+					<a href="#">BBC News</a>
+				</li>
+			</ol>
 		</div>
 		<div class="footer"></div>
 	</div>
