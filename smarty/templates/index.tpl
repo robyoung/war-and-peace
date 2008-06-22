@@ -44,5 +44,12 @@
 	{include file='navigation.tpl'}
 	{include file='map.tpl'}
 	{include file='details.tpl'}
+	<div id="infobox">
+		<div class="header"></div>
+		<div id="infobody">
+		
+		</div>
+		<div class="footer"></div>
+	</div>
 </body>
 </html>
