@@ -46,7 +46,7 @@ class MultiMap
 		return $sql;
 	}
 
-  public function getEdgesForBox($bottom_left, $top_right, $middle, $count, $country=null, $edge_types=null)
+  public function getEdgesForBox($bottom_left, $top_right, $middle, $count, $countries=null, $edge_types=null)
   {
 		$country_one = $this->_buildBounder('country_one', $bottom_left, $top_right, $middle);
 		$country_two = $this->_buildBounder('country_two', $bottom_left, $top_right, $middle);
@@ -57,7 +57,8 @@ class MultiMap
       "JOIN countries AS country_one ON (edge.country_one=country_one.id) ".
       "JOIN countries AS country_two ON (edge.country_two=country_two.id) " .
       "JOING edge_type on (edge.edge_type=edge_type.id) ".
-      "WHERE " . $country_one . ' and ' . $country_two . ' ' . ($country?'and (edge.coutnry_one=' . $country . ' or edge.country_two=' . $country . ') ':'') .
+      "WHERE " . $country_one . ' and ' . $country_two . ' ' . 
+      ($countries?'and (edge.country_one in (' . implode(',', $countries) . ') or edge.country_two in (' . implode(',', $countries) . ')) ':'') .
       ($edge_types?'and edge.edge_type IN (' . implode(',', $edge_types) . ') ':'').
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
