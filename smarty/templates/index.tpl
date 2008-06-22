@@ -59,5 +59,12 @@
 	
 	<div id="test"></div>
 	
+	<div id="infobox">
+		<div class="header"></div>
+		<div id="infobody">
+		
+		</div>
+		<div class="footer"></div>
+	</div>
 </body>
 </html>
