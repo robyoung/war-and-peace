@@ -15,6 +15,7 @@ foreach ($opml->xpath('//outline') as $item) {
 	}
 }
 $parser->add('http://www.guardian.co.uk/rss');
+$parser->add('http://www.guardian.co.uk/world/rss');
 $parser->add('http://www.guardian.co.uk/rssfeed/0,,11,00.xml');
 $parser->add('http://www.guardian.co.uk/rssfeed/0,,12,00.xml');
 $parser->add('http://www.guardian.co.uk/rssfeed/0,,5,00.xml');
