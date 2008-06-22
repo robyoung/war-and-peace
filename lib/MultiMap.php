@@ -46,7 +46,7 @@ class MultiMap
 		return $sql;
 	}
 
-  public function getEdgesForBox($bottom_left, $top_right, $middle, $count)
+  public function getEdgesForBox($bottom_left, $top_right, $middle, $count, $country=null, $edge_types=null)
   {
 		$country_one = $this->_buildBounder('country_one', $bottom_left, $top_right, $middle);
 		$country_two = $this->_buildBounder('country_two', $bottom_left, $top_right, $middle);
@@ -56,21 +56,38 @@ class MultiMap
       "FROM edge " .
       "JOIN countries AS country_one ON (edge.country_one=country_one.id) ".
       "JOIN countries AS country_two ON (edge.country_two=country_two.id) " .
-      "WHERE " . $country_one . ' and ' . $country_two . ' ' .
+      "WHERE " . $country_one . ' and ' . $country_two . ' ' . ($country?'and (edge.coutnry_one=' . $country . ' or edge.country_two=' . $country . ') ':'') .
+      ($edge_types?'and edge.edge_type IN (' . implode(',', $edge_types) . ') ':'').
       "group by country_one_id, country_two_id, country_one_name, country_one_lat, country_one_long, country_two_name, country_two_lat, country_two_long, distance ".
       "order by distance desc limit $count";
-    
-    echo $sql . "\n\n";
+
     $items  = dbSelect($sql);
     echo count($items) . "\n";
 
     $return = array();
     foreach ($items as $item) {
-      $sql = 'SELECT edge.url, edge.title, edge_type.name '.
+      $sql = 'SELECT edge.url, edge.title, edge_type.name as type '.
              'FROM edge JOIN edge_type ON (edge.edge_type=edge_type.id) '.
              'WHERE edge.country_one='.$item['country_one_id'].' '.
              'and edge.country_two='.$item['country_two_id'];
       $edges = dbSelect($sql);
+      $types = array();
+      $colours = array(
+        'angry'    => '#c8050c',
+        'happy'    => '#00b495',
+        'sport'    => '#00a235',
+        'business' => '#538aad',
+        'pirates'  => '#1a5690'
+        );
+      foreach ($edges as $edge) {
+        if (!isset($types[$edge['type']])) {
+          $types[$edge['type']] = 1;
+        } else {
+          $types[$edge['type']]++;
+        }
+      }
+      list($type, $count) = each($types);
+      
       $return_item = array(
         'countries' =>
           array(
@@ -87,10 +104,12 @@ class MultiMap
               'long' => $item['country_two_long']
             )
           ),
+          'colour' => $colours[$type],
           'edges' => $edges
         );
       $return[] = $return_item;
     }
+    return '';
     return $return;
   }
 }
