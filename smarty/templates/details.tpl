@@ -18,11 +18,14 @@
 		</ul>
 	</div>
 	<div id="key">
-		<h1>Relationship type</h1>
 		<ul id="type">
 			<li>
-				<span class="key bad"></span>
-				<span class="title"><a href="#">Bad</a></span>
+				<span class="key happy"></span>
+				<span class="title"><a href="#">Happy</a></span>
+			</li>
+			<li>
+				<span class="key sad"></span>
+				<span class="title"><a href="#">Sad</a></span>
 			</li>
 			<li>
 				<span class="key sport"></span>
