@@ -3,35 +3,35 @@ require 'inc/config.php';
 require 'inc/db.php';
 
 require 'lib/FeedParser.class.php';
-require 'lib/Tokenizer.class.php';
+require 'lib/Parser.class.php';
 
 echo "Loading feeds...";
-$parser = new FeedParser();
+$feed_parser = new FeedParser();
 $opml = simplexml_load_file('http://news.bbc.co.uk/rss/feeds.opml');
 $i = 0;
 foreach ($opml->xpath('//outline') as $item) {
 	if ((string)$item['language'] == 'en-gb') {
-		$parser->add((string)$item['xmlUrl']);
+		$feed_parser->add((string)$item['xmlUrl']);
 	}
 }
-$parser->add('http://www.guardian.co.uk/rss');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,11,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,12,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,5,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,24,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,15065,19,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,18,00.xml');
-$parser->add('http://www.guardian.co.uk/rssfeed/0,,7,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rss');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,11,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,12,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,5,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,24,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,15065,19,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,18,00.xml');
+$feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,7,00.xml');
 echo "DONE\n";
 
-$tk_factory = TokenizerFactory::create();
+$parser_factory = ParserFactory::create();
 
-foreach ($parser as $item) {
-  $tokenizer = $tk_factory->createTokenizer($parser, $item);
-  $locations = $tokenizer->getLocations();
+foreach ($feed_parser as $item) {
+  $parser = $parser_factory->createParser($feed_parser, $item);
+  $locations = $parser->getLocations();
   if ($locations) {
     if (count($locations)>1) {
-      $classifier = $tokenizer->getEdgeType();
+      $classifier = $parser->getEdgeType();
       if ($classifier) {
         if (!dbSelect('SELECT * FROM edge WHERE edge_type="'. $classifier['edge_type_id'] . '" and guid="' . (string)$item->guid() . '"')) {
           dbInsert('edge', array(
@@ -44,7 +44,7 @@ foreach ($parser as $item) {
           ));
         }
       } else {
-        echo $tokenizer . "\n";
+        echo $parser . "\n";
         echo $item->content() . "\n";
         echo $item->description() . "\n";
         print_r($locations);
