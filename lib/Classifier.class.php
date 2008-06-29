@@ -31,6 +31,9 @@ class SimpleClassifier
 
 class Classifier
 {
+	private $categories;
+	private $feature_counts;
+
 	private $feature_category_counts;
 	private $category_counts;
 	/**
@@ -50,29 +53,80 @@ class Classifier
 	{
 		switch ($name) {
 		case 'categories':
-			return array_keys($this->category_counts);
+			$this->_loadCategories();
+			return array_keys($this->categories);
 		}
+	}
+	
+	public function getAllCategories()
+	{
+		return $this->categories;
+	}
+	
+	public function getCategory($category)
+	{
+		return $this->categories[$category];
 	}
 	
 	protected function getFeatures($document)
 	{
 		return $this->tokenizer->getTerms($document);
 	}
+
+	protected function _loadFeatures()
+	{
+		if (!$this->feature_counts) {
+			$this->feature_counts = array();
+			foreach (dbSelect('SELECT * FROM feature_counts') as $feature) {
+				$this->feature_counts[$feature['name']][$feature['category']] = $feature['count'];
+			}
+		}
+	}
+	
+	public function featureCount($feature, $category)
+	{
+		$this->_loadFeatures();
+		if (!isset($this->feature_counts[$feature][$category])) return 0;
+		return $this->feature_counts[$feature][$category];
+	}
 	
 	protected function incFeature($feature, $category)
 	{
-		if (!isset($this->feature_category_counts[$feature][$category])) {
-			$this->feature_category_counts[$feature][$category] = 0;
+		$count = $this->featureCount($feature, $category);
+		// update the db
+		if ($count) {
+			dbUpdate('feature_counts', array('count'=>$count+1), "feature='$feature' and category=$category");
+			$this->feature_counts[$feature][$category] = $count+1;
+		} else {
+			dbInsert('feature_counts', array('feature'=>$feature, 'category'=>$category, 'count'=>1));
+			$this->feature_counts[$feature][$category] = 1;
+		}		
+	}
+
+	protected function _loadCategories()
+	{
+		if (!$this->categories) {
+			$this->categories = array();
+			foreach (dbSelect("SELECT * FROM category") as $category) {
+				$this->categories[$category['id']] = $category;
+			}
 		}
-		$this->feature_category_counts[$feature][$category]++;
+	}
+
+	public function categoryCount($category)
+	{
+		$this->_loadCategories();
+		if (!isset($this->categories[$category])) {
+			throw new Exception("Unhandled category id " . $category);
+		}
+		return $this->categories[$category]['count'];
 	}
 	
 	protected function incCategory($category)
 	{
-		if (!isset($this->category_counts[$category])) {
-			$this->category_counts[$category] = 0;
-		}
-		$this->category_counts[$category]++;
+		$count = $this->categoryCount($category);
+		dbUpdate('category', array('count'=>$count+1), 'id=' . $category);
+		$this->categories[$category]['count'] = $count + 1;
 	}
 	
 	public function featureProbability($feature, $category)
@@ -81,7 +135,7 @@ class Classifier
 		return $this->featureCount($feature, $category) / $this->categoryCount($category);
 	}
 	
-	public function weightedProbability($feature, $category, $method, $weight=1, $assumed_probability=0.5)
+	public function weightedProbability($feature, $category, $method, $weight=1, $assumed_probability=0.3)
 	{
 		$probability = call_user_func(array($this, $method), $feature, $category);
 		$total       = 0;
@@ -89,20 +143,6 @@ class Classifier
 			$total += $this->featureCount($feature, $other_category);
 		}
 		return (($weight*$assumed_probability) + ($probability*$total)) / ($weight + $total);
-	}
-	
-	public function featureCount($feature, $category)
-	{
-		if (!isset($this->feature_category_counts[$feature][$category])) return 0;
-		return $this->feature_category_counts[$feature][$category];
-	}
-	
-	public function categoryCount($category)
-	{
-		if (isset($this->category_counts[$category])) {
-			return $this->category_counts[$category];
-		}
-		return 0;	
 	}
 	
 	public function totalCount()
@@ -169,7 +209,6 @@ class FisherClassifier extends Classifier
 	{
 		$clf = $this->featureProbability($feature, $category);
 		if ($clf == 0) return 0;
-		
 		$freqsum = 0;
 		foreach ($this->categories as $other_category) {
 			$freqsum += $this->featureProbability($feature, $other_category);
@@ -183,7 +222,8 @@ class FisherClassifier extends Classifier
 		$prob = 1;
 		$features = $this->getFeatures($document);
 		foreach ($features as $feature) {
-			$prob *= $this->weightedProbability($feature, $category, 'categoryProbability');
+			$category_probability = $this->weightedProbability($feature, $category, 'categoryProbability');
+			$prob *= $category_probability;
 		}
 		$score = log($prob) * -2;
 		
@@ -203,7 +243,7 @@ class FisherClassifier extends Classifier
 				$best = $category;
 			}
 		}
-		return $best ? $best : null;
+		return $best ? $this->getCategory($best) : null;
 	}
 	
 	private function invchi2($chi, $df)

@@ -12,9 +12,10 @@ class ParserFactory
   public static function create()
   {
     $factory = new self();
+    $tokenizer = self::createTokenizer();
     $factory->setCountryFinder(CountryFinder::create());
-    $factory->setClassifier(SimpleClassifier::create());
-    $factory->setTokenizer(self::createTokenizer());
+    $factory->setClassifier(new FisherClassifier($tokenizer));
+    $factory->setTokenizer($tokenizer);
     return $factory;
   }
   
@@ -68,7 +69,7 @@ class Parser
 	private $country_finder;
 	private $classifier;
 	private $tokenizer;
-	
+
 	private $parser;
 	private $item;
 
@@ -79,7 +80,7 @@ class Parser
 	    $this->classifier     = $classifier;
 	    $this->tokenizer      = $tokenizer;
 	}
-	
+
 	public function __get($name)
 	{
 		switch ($name) {
@@ -93,20 +94,20 @@ class Parser
     	$this->parser = $parser;
     	$this->item   = $item;
 	}
-	
+
 	public function addText($text)
 	{
     	$text = str_replace(array('US', 'UK'), array('United States', 'United Kingdom'), $text);
 		$this->text .= str_repeat(' ', 10) . $text;
 		$this->text = trim($this->text);
 	}
-	
+
 	public function getCapsNGrams()
 	{
 		preg_match_all('#(?:^|\W)([A-Z]\w+(?:\W{1,3}[A-Z]\w+)*)(?:\W|$)#', $this->text, $matches);
 		return $matches[1];
 	}
-	
+
 	public function getTerms()
 	{
 		return $this->tokenizer->getTerms($this->text);
@@ -115,6 +116,12 @@ class Parser
 	public function getLocations()
   	{
     	return $this->country_finder->getLocations($this->getCapsNGrams());
+	}
+
+	public function classify()
+	{
+		$category = $this->classifier->classify((string)$this->text);
+		return $category;
 	}
 
 	public function getEdgeType()
@@ -163,7 +170,7 @@ class WordTokenizer extends BaseTokenizer
 abstract class BaseFilter implements TokenFilter
 {
 	protected $filter_chain;
-	
+
 	public function __construct()
 	{
 		$this->filter_chain = new NullFilter();
@@ -185,7 +192,7 @@ class NullFilter implements TokenFilter
 	{
 		return $terms;
 	}
-	
+
 	public function addFilter(TokenFilter $filter)
 	{
 		throw new Exception("Cannot add to a NullFilter");
@@ -195,7 +202,7 @@ class NullFilter implements TokenFilter
 class StopWordFilter extends BaseFilter 
 {
 	private $stopwords;
-	
+
 	public function __construct($stopwords=null)
 	{
 		parent::__construct();
