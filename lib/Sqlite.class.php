@@ -57,7 +57,8 @@ function dbSelect($query, $one_row=false)
     $dbLink = _getLink();
 
     $result = $dbLink->query($query);
-
+    
+    if (!$result) return array();
     return $one_row ? $result->fetch() : $result->fetchAll();
 }
 

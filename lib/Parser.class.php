@@ -22,7 +22,8 @@ class ParserFactory
   public static function createTokenizer()
   {
     $filter     = new LowercaseFilter();
-  	$filter->addFilter(new StopWordFilter(array('the', 'a', 'and', 'is', 'it')));
+    $filter->addFilter(new StopWordFilter(array('the', 'a', 'and', 'is', 'it', 'of', 'to', 'be', 'in')));
+    $filter->addFilter(new ShortWordFilter(2));
   	$tokenizer = new WordTokenizer($filter);
     return $tokenizer;
   }
@@ -116,13 +117,44 @@ class Parser
 	public function getLocations()
   	{
     	return $this->country_finder->getLocations($this->getCapsNGrams());
-	}
+    }
+
+  public function getClassifier()
+  {
+    return $this->classifier;
+  }
+
+  public function train($category)
+  {
+    $this->classifier->train((string)$this->text, $category);
+  }
 
 	public function classify()
 	{
 		$category = $this->classifier->classify((string)$this->text);
 		return $category;
-	}
+  }
+
+  public function haveEdge($item)
+  {
+    $data = dbSelect('SELECT * FROM edge WHERE guid="' . (string)$item->guid() . '"');
+    return (bool)$data;
+  }
+
+  public function saveEdge($item, $category, $locations)
+  {
+    if (!$this->haveEdge($item)) {
+        echo "Added > " . (string)$item->title() . ' > ' . $category['name'] . "\n";
+        dbInsert('edge', array(
+            'category'    => $category['id'],
+            'country_one' => min($locations[0]['country_id'], $locations[1]['country_id']),
+            'country_two' => max($locations[0]['country_id'], $locations[1]['country_id']),
+            'url'         => (string)$item->link(),
+            'guid'        => (string)$item->guid(),
+            'title'       => (string)$item->title()
+        ));
+    }
+  }
 
 	public function getEdgeType()
   	{
@@ -217,6 +249,27 @@ class StopWordFilter extends BaseFilter
 	{
 		return $this->filter_chain->filter(array_diff($terms, $this->stopwords));
 	}
+}
+
+class ShortWordFilter extends BaseFilter
+{
+  private $min_length;
+
+  public function __construct($length)
+  {
+    parent::__construct();
+    $this->min_length = $length;
+  }
+
+  public function _filter($item)
+  {
+    return strlen($item) >= $this->min_length;
+  }
+
+  public function filter($terms)
+  {
+    return $this->filter_chain->filter(array_filter($terms, array($this, '_filter')));
+  }
 }
 
 class LowercaseFilter extends BaseFilter 

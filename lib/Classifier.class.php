@@ -65,8 +65,13 @@ class Classifier
 	
 	public function getCategory($category)
 	{
-		return $this->categories[$category];
-	}
+		return @$this->categories[$category];
+  }
+
+  public function getCategoryWeight($category)
+  {
+    return @$this->categories[$category]['weight'];
+  }
 	
 	protected function getFeatures($document)
 	{
@@ -78,14 +83,17 @@ class Classifier
 		if (!$this->feature_counts) {
 			$this->feature_counts = array();
 			foreach (dbSelect('SELECT * FROM feature_counts') as $feature) {
-				$this->feature_counts[$feature['name']][$feature['category']] = $feature['count'];
+				$this->feature_counts[$feature['feature']][$feature['category']] = $feature['count'];
 			}
-		}
+    }
 	}
 	
 	public function featureCount($feature, $category)
 	{
-		$this->_loadFeatures();
+    $this->_loadFeatures();
+    if (is_array($category)) {
+      throw new Exception("bad category");
+    }
 		if (!isset($this->feature_counts[$feature][$category])) return 0;
 		return $this->feature_counts[$feature][$category];
 	}
@@ -140,7 +148,7 @@ class Classifier
 		$probability = call_user_func(array($this, $method), $feature, $category);
 		$total       = 0;
 		foreach ($this->categories as $other_category) {
-			$total += $this->featureCount($feature, $other_category);
+			$total += $this->featureCount($feature, $other_category['id']);
 		}
 		return (($weight*$assumed_probability) + ($probability*$total)) / ($weight + $total);
 	}
@@ -219,7 +227,7 @@ class FisherClassifier extends Classifier
 
 	public function documentProbability($document, $category)
 	{
-		$prob = 1;
+    $prob = 1;
 		$features = $this->getFeatures($document);
 		foreach ($features as $feature) {
 			$category_probability = $this->weightedProbability($feature, $category, 'categoryProbability');
@@ -233,12 +241,12 @@ class FisherClassifier extends Classifier
 	
 	public function classify($document)
 	{
-		$threshold = 0.7;
 		$max  = 0;
 		$best = null;
 		foreach ($this->categories as $category) {
-			$probability = $this->documentProbability($document, $category);
-			if ($probability > $threshold && $probability > $max) {
+      $probability = $this->documentProbability($document, $category);
+      echo 'pr(' . $category . ':'. round($probability, 3) . ')';
+			if ($probability > $this->getCategoryWeight($category) && $probability > $max) {
 				$max  = $probability;
 				$best = $category;
 			}
