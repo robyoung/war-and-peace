@@ -15,6 +15,7 @@ foreach ($opml->xpath('//outline') as $item) {
 	}
 }
 $feed_parser->add('http://www.guardian.co.uk/rss');
+$feed_parser->add('http://www.guardian.co.uk/world/rss');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,11,00.xml');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,12,00.xml');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,5,00.xml');
@@ -22,6 +23,7 @@ $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,24,00.xml');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,15065,19,00.xml');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,18,00.xml');
 $feed_parser->add('http://www.guardian.co.uk/rssfeed/0,,7,00.xml');
+$feed_parser->add('http://english.aljazeera.net/Services/Rss/?PostingId=2007731105943979989');
 echo "DONE\n";
 
 $parser_factory = ParserFactory::create();
@@ -36,8 +38,8 @@ foreach ($feed_parser as $item) {
         if (!dbSelect('SELECT * FROM edge WHERE edge_type="'. $classifier['edge_type_id'] . '" and guid="' . (string)$item->guid() . '"')) {
           dbInsert('edge', array(
             'edge_type' => $classifier['edge_type_id'],
-            'country_one' => $locations[0]['country_id'],
-            'country_two' => $locations[1]['country_id'],
+            'country_one' => min($locations[0]['country_id'], $locations[1]['country_id']),
+            'country_two' => max($locations[0]['country_id'], $locations[1]['country_id']),
             'url'         => (string)$item->link(),
             'guid'        => (string)$item->guid(),
             'title'       => (string)$item->title()

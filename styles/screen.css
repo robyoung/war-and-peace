@@ -17,6 +17,7 @@ body{
 	top:50px;
 	background-position:0 21px;
 	opacity:0.9;
+	z-index:100;
 	}
 #infobox .header{
 	width:218px;
@@ -38,16 +39,59 @@ body{
 /* @group Header */
 #navigation{
 	width:100%;
-	height:29px;
-	padding:4px 0 0 0;
+	height:31px;
+	padding:2px 0 0 0;
 	background:url(../images/nav.png);
 	}
 #navigation a{
 	float:left;
 	margin:0 0 0 10px;
+	padding:2px 11px 2px 13px;
 	color:#fff;
 	font-size:1.1em;
 	text-decoration:none;
+	}
+#navigation a:hover{
+	background:url(../images/selectorbg.png) repeat-y;
+	}
+.selector{
+	position:absolute;
+	top:24px;
+	width:210px;
+	padding:4px 0 0 0;
+	z-index:100;
+	list-style-type:none;
+	background:url(../images/selectorbg.png) no-repeat;
+	display:none;
+	}
+#countrylist{
+	left:-8px;
+	}
+#relationships{
+	left:81px;
+	}
+.selector li{
+	float:left;
+	clear:left;
+	width:210px;
+	padding:0;
+	margin:0;
+	background:url(../images/selectorbg.png) repeat-y;
+	}
+#navigation .selector li a{
+	width:184px;
+	padding:5px 0 4px 9px;
+	margin:0 0 0 5px;
+	background:none;
+	color:#bbb;
+	}
+#navigation .selector li a:hover{
+	background-color:#112135;
+	}
+#navigation .selector li.footer{
+	width:210px;
+	height:16px;
+	background:url(../images/footer.png);
 	}
 /* @end */
 /* @group Map */
@@ -95,6 +139,10 @@ body{
 	color:#bbb;
 	text-decoration:none;
 	}
+#details ul li a:hover{
+	text-decoration:underline;
+	color:#ccc;
+	}
 #current{
 	border-right:1px solid #777;
 	}
@@ -106,9 +154,13 @@ span.key{
 	display:block;
 	width:12px;
 	height:12px;
+	border:1px solid #fff;
 	}
-span.bad{
+span.sad{
 	background-color:#c8050c;
+	}
+span.happy{
+	background-color:#00b495;
 	}
 span.sport{
 	background-color:#00a235;
@@ -124,7 +176,7 @@ span.title{
 	float:left;
 	margin:0 0 0 7px;
 	color:#555;
-	line-height:10px;
+	line-height:14px;
 	}
 /* @end */
 /* @group Typography */
@@ -134,5 +186,42 @@ h1{
 	font-size:1.2em;
 	font-weight:bold;
 	color:#ddd;
+	}
+/* @end */
+/* @group Infobox */
+#infobox h1{
+	float:left;
+	margin:0 0 0 14px;
+	padding:10px 0 0 0;
+	font-weight:normal;
+	}
+#infobox ol{
+	float:left;
+	margin:10px 0 0 14px;
+	width:186px;
+	list-style-type:none;
+	color:#111;
+	}
+#infobox ol li{
+	float:left;
+	clear:left;
+	padding:3px 0 5px 0;
+	width:100%;
+	overflow:hidden;
+	border-top:1px solid #555;
+	}
+#infobox ol li span{
+	float:left;
+	clear:left;
+	width:100%;
+	font-size:1.1em;
+	}
+#infobox ol li a{
+	float:left;
+	clear:left;
+	width:100%;
+	white-space:normal;
+	color:#999;
+	text-decoration:none;
 	}
 /* @end */

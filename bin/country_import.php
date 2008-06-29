@@ -1,7 +1,7 @@
 <?php
 
-require('../inc/config.php');
-require('../inc/db.php');
+require('inc/config.php');
+require('inc/db.php');
 
 $handle = fopen($config['path'] . 'data/countries2.csv', "r");while (($data = fgetcsv($handle)) !== FALSE) {
 		$countryId = dbInsert('countries', array('name' => $data[0]));
